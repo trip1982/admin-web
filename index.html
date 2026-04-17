@@ -1227,6 +1227,14 @@
       }
       
       const url = `https://${CONFIG.envId}.api.tcloudbasegateway.com/v1/functions/adminApi`;
+      const requestBody = { module, action, password: adminPassword, ...data };
+      
+      console.log('=== 诊断信息 ===');
+      console.log('请求URL:', url);
+      console.log('请求体:', JSON.stringify(requestBody).substring(0, 200));
+      console.log('Token前20字符:', CONFIG.token ? CONFIG.token.substring(0, 20) + '...' : '无');
+      console.log('密码:', adminPassword ? '已输入' : '未输入');
+      
       try {
         const res = await fetch(url, {
           method: 'POST',
@@ -1234,9 +1242,25 @@
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${CONFIG.token}`
           },
-          body: JSON.stringify({ module, action, password: adminPassword, ...data })
+          body: JSON.stringify(requestBody)
         });
-        const result = await res.json();
+        
+        console.log('HTTP状态码:', res.status);
+        console.log('响应头:', Object.fromEntries(res.headers.entries()));
+        
+        const text = await res.text();
+        console.log('原始响应:', text.substring(0, 500));
+        
+        let result;
+        try {
+          result = JSON.parse(text);
+        } catch (e) {
+          console.error('JSON解析失败:', e);
+          showToast('响应格式错误: ' + res.status);
+          return { success: false, message: '响应格式错误' };
+        }
+        
+        console.log('解析结果:', JSON.stringify(result).substring(0, 300));
         
         if (result.success === false && result.message === '未授权访问') {
           adminPassword = '';
@@ -1250,6 +1274,7 @@
         return result;
       } catch (error) {
         console.error('调用失败:', error);
+        showToast('网络错误: ' + error.message);
         return { success: false, message: error.message };
       }
     }
