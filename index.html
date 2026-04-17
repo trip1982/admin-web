@@ -673,7 +673,8 @@
     <div class="login-content">
       <div class="login-logo">🌌</div>
       <h2>墨矩XR 管理后台</h2>
-      <input type="password" id="passwordInput" placeholder="请输入管理员密码" />
+      <input type="text" id="tokenInput" placeholder="请输入访问密钥" />
+      <input type="password" id="passwordInput" placeholder="请输入管理员密码" style="margin-top: 12px;" />
       <p id="loginError" class="error-text"></p>
       <button class="btn btn-primary" onclick="login()">登录</button>
     </div>
@@ -1188,22 +1189,31 @@
     }
 
     function login() {
+      const token = document.getElementById('tokenInput').value.trim();
       const password = document.getElementById('passwordInput').value;
+      if (!token) {
+        document.getElementById('loginError').textContent = '请输入访问密钥';
+        return;
+      }
       if (!password) {
-        document.getElementById('loginError').textContent = '请输入密码';
+        document.getElementById('loginError').textContent = '请输入管理员密码';
         return;
       }
       
       adminPassword = password;
+      CONFIG.token = token;
       localStorage.setItem('adminPassword', password);
+      localStorage.setItem('adminToken', token);
       document.getElementById('loginModal').style.display = 'none';
       loadList();
     }
 
     function checkLogin() {
-      const saved = localStorage.getItem('adminPassword');
-      if (saved) {
-        adminPassword = saved;
+      const savedPassword = localStorage.getItem('adminPassword');
+      const savedToken = localStorage.getItem('adminToken');
+      if (savedPassword && savedToken) {
+        adminPassword = savedPassword;
+        CONFIG.token = savedToken;
         document.getElementById('loginModal').style.display = 'none';
       } else {
         document.getElementById('loginModal').style.display = 'flex';
@@ -1211,7 +1221,7 @@
     }
 
     async function callAdminApi(module, action, data = {}) {
-      if (!adminPassword) {
+      if (!adminPassword || !CONFIG.token) {
         checkLogin();
         return { success: false, message: '请先登录' };
       }
@@ -1222,6 +1232,7 @@
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${CONFIG.token}`,
             'X-Password': adminPassword
           },
           body: JSON.stringify({ module, action, ...data })
@@ -1230,8 +1241,10 @@
         
         if (result.success === false && result.message === '未授权访问') {
           adminPassword = '';
+          CONFIG.token = '';
           localStorage.removeItem('adminPassword');
-          document.getElementById('loginError').textContent = '密码错误';
+          localStorage.removeItem('adminToken');
+          document.getElementById('loginError').textContent = '密钥或密码错误';
           document.getElementById('loginModal').style.display = 'flex';
         }
         
