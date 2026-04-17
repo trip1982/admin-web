@@ -1232,10 +1232,9 @@
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${CONFIG.token}`,
-            'X-Password': adminPassword
+            'Authorization': `Bearer ${CONFIG.token}`
           },
-          body: JSON.stringify({ module, action, ...data })
+          body: JSON.stringify({ module, action, password: adminPassword, ...data })
         });
         const result = await res.json();
         
