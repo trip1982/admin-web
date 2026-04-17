@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>墨矩XR - 管理后台</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #0a0a23 0%, #1a1a4e 50%, #0d0d3d 100%);
+      min-height: 100vh;
+      color: #fff;
+    }
+    .header {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      padding: 20px 30px;
+      border-bottom: 1px solid rgba(124, 111, 255, 0.2);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+      color: #7c6fff;
+      text-shadow: 0 0 20px rgba(124, 111, 255, 0.5);
+    }
+    .nav-tabs {
+      display: flex;
+      gap: 20px;
+    }
+    .nav-tab {
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 14px;
+    }
+    .nav-tab.active {
+      background: linear-gradient(135deg, #7c6fff, #5b4fe0);
+      color: #fff;
+    }
+    .nav-tab:hover:not(.active) {
+      background: rgba(124, 111, 255, 0.1);
+    }
+    .container {
+      padding: 30px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 24px;
+      border: 1px solid rgba(124, 111, 255, 0.2);
+      backdrop-filter: blur(10px);
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .card-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: #fff;
+    }
+    .btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #7c6fff, #5b4fe0);
+      color: #fff;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(124, 111, 255, 0.4);
+    }
+    .btn-success {
+      background: linear-gradient(135deg, #07c160, #06ad56);
+      color: #fff;
+    }
+    .btn-warning {
+      background: linear-gradient(135deg, #faad14, #d48806);
+      color: #333;
+    }
+    .btn-danger {
+      background: linear-gradient(135deg, #ff4d4f, #cf1322);
+      color: #fff;
+    }
+    .btn-info {
+      background: linear-gradient(135deg, #1890ff, #096dd9);
+      color: #fff;
+    }
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+    .btn-group {
+      display: flex;
+      gap: 10px;
+    }
+    .form-group {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .form-control {
+      padding: 12px 16px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.06);
+      color: #fff;
+      font-size: 14px;
+      min-width: 200px;
+    }
+    .form-control:focus {
+      outline: none;
+      border-color: #7c6fff;
+      box-shadow: 0 0 0 3px rgba(124, 111, 255, 0.2);
+    }
+    .form-control::placeholder {
+      color: rgba(255, 255, 255, 0.4);
+    }
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .table th, .table td {
+      padding: 14px 12px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .table th {
+      background: rgba(124, 111, 255, 0.08);
+      font-weight: 600;
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.7);
+    }
+    .table tr:hover {
+      background: rgba(124, 111, 255, 0.06);
+    }
+    .badge {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .badge-success { background: rgba(7, 193, 96, 0.2); color: #07c160; }
+    .badge-danger { background: rgba(255, 77, 79, 0.2); color: #ff4d4f; }
+    .badge-warning { background: rgba(250, 173, 20, 0.2); color: #faad14; }
+    .badge-info { background: rgba(24, 144, 255, 0.2); color: #1890ff; }
+    .badge-purple { background: rgba(124, 111, 255, 0.2); color: #7c6fff; }
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.2);
+      margin-right: 4px;
+    }
+    .dot.filled { background: #07c160; }
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .page-btn {
+      padding: 8px 16px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .page-btn:hover:not(.disabled) {
+      background: rgba(124, 111, 255, 0.2);
+    }
+    .page-btn.disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .page-info {
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 14px;
+    }
+    .login-modal {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(10, 10, 35, 0.98), rgba(26, 26, 78, 0.98));
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      backdrop-filter: blur(10px);
+    }
+    .login-content {
+      background: rgba(40, 40, 80, 0.95);
+      border-radius: 24px;
+      padding: 48px 40px;
+      width: 90%;
+      max-width: 420px;
+      text-align: center;
+      border: 1px solid rgba(124, 111, 255, 0.4);
+      box-shadow: 0 0 60px rgba(124, 111, 255, 0.2);
+    }
+    .login-logo {
+      font-size: 64px;
+      margin-bottom: 16px;
+    }
+    .login-content h2 {
+      font-size: 24px;
+      font-weight: bold;
+      color: #fff;
+      margin-bottom: 24px;
+    }
+    .login-content input[type="password"] {
+      width: 100%;
+      padding: 16px 20px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.06);
+      color: #fff;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+    .login-content input[type="password"]:focus {
+      outline: none;
+      border-color: #7c6fff;
+      box-shadow: 0 0 0 3px rgba(124, 111, 255, 0.2);
+    }
+    .login-content input[type="password"]::placeholder {
+      color: rgba(255, 255, 255, 0.4);
+    }
+    .login-content .btn {
+      width: 100%;
+      margin-top: 20px;
+      padding: 16px;
+      font-size: 16px;
+    }
+    .error-text {
+      color: #ff4d4f;
+      font-size: 14px;
+      margin-top: 12px;
+      min-height: 20px;
+    }
+    .modal-mask {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      backdrop-filter: blur(4px);
+    }
+    .modal-mask.show {
+      display: flex;
+    }
+    .modal-content {
+      background: rgba(30, 30, 60, 0.95);
+      border-radius: 16px;
+      padding: 24px;
+      width: 90%;
+      max-width: 600px;
+      max-height: 80vh;
+      overflow-y: auto;
+      border: 1px solid rgba(124, 111, 255, 0.3);
+    }
+    .modal-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .modal-field {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .field-label {
+      color: rgba(255, 255, 255, 0.65);
+      font-size: 14px;
+    }
+    .modal-actions {
+      display: flex;
+      gap: 16px;
+      margin-top: 24px;
+    }
+    .modal-actions .btn {
+      flex: 1;
+      justify-content: center;
+    }
+    .switch {
+      position: relative;
+      width: 44px;
+      height: 24px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .switch.on {
+      background: #07c160;
+    }
+    .switch::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: #fff;
+      border-radius: 50%;
+      top: 2px;
+      left: 2px;
+      transition: all 0.3s;
+    }
+    .switch.on::after {
+      left: 22px;
+    }
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(124, 111, 255, 0.3);
+      border-top-color: #7c6fff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .empty-tip {
+      text-align: center;
+      color: rgba(255, 255, 255, 0.4);
+      padding: 40px 0;
+    }
+    .search-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .search-bar .form-control {
+      flex: 1;
+      max-width: 300px;
+    }
+    .qr-preview {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .qr-image {
+      max-width: 300px;
+      max-height: 300px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .copy-btn {
+      cursor: pointer;
+      color: #1890ff;
+      text-decoration: underline;
+      font-size: 13px;
+    }
+    .copy-btn:hover {
+      color: #40a9ff;
+    }
+    .demo-params {
+      background: rgba(250, 173, 20, 0.08);
+      border-radius: 10px;
+      padding: 16px;
+      margin-top: 12px;
+      border: 1px solid rgba(250, 173, 20, 0.2);
+    }
+    .demo-param-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .demo-param-row:last-child {
+      margin-bottom: 0;
+    }
+    .demo-param-label {
+      color: rgba(255, 255, 255, 0.55);
+      font-size: 13px;
+    }
+    .demo-param-input {
+      width: 120px;
+      text-align: center;
+    }
+    .action-cell {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .section-tabs {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .section-tab {
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      background: rgba(255, 255, 255, 0.06);
+      transition: all 0.2s;
+    }
+    .section-tab.active {
+      background: rgba(124, 111, 255, 0.3);
+    }
+    .admin-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+    .admin-id {
+      font-family: monospace;
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.65);
+      max-width: 300px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .admin-remark {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.4);
+      margin-left: 12px;
+    }
+    .recent-users-list {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .recent-user-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .recent-user-id {
+      font-family: monospace;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.55);
+    }
+    .toast {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.85);
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 14px;
+      z-index: 2000;
+      display: none;
+    }
+    .toast.show {
+      display: block;
+      animation: fadeIn 0.3s;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+      to { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">🌌 墨矩XR 管理后台</div>
+    <div class="nav-tabs">
+      <div class="nav-tab active" data-tab="loginIds">登录ID管理</div>
+      <div class="nav-tab" data-tab="admins">管理员管理</div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div id="tab-loginIds" class="tab-content">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">登录ID列表</div>
+          <div class="btn-group">
+            <button class="btn btn-primary" onclick="toggleBatchForm()">
+              📦 批量生成
+            </button>
+            <button class="btn btn-success" onclick="toggleAddForm()">
+              ➕ 添加ID
+            </button>
+            <button class="btn btn-warning" onclick="cleanExpiredDemoBindings()">
+              🧹 清理过期
+            </button>
+          </div>
+        </div>
+
+        <div class="search-bar">
+          <input type="text" class="form-control" id="searchKeyword" placeholder="搜索登录ID或备注" onkeyup="handleSearchKeyup(event)">
+          <button class="btn btn-info" onclick="doSearch()">搜索</button>
+        </div>
+
+        <div id="batchForm" style="display: none; margin-bottom: 20px;" class="card">
+          <h4 style="margin-bottom: 16px; font-size: 14px; color: rgba(255,255,255,0.7);">批量生成登录ID</h4>
+          <div class="form-group">
+            <select class="form-control" id="batchScene">
+              <option value="PlanetCQ">PlanetCQ</option>
+              <option value="PlanetSH">PlanetSH</option>
+            </select>
+            <input type="number" class="form-control" id="batchCount" placeholder="数量" value="10" min="1" max="500">
+            <button class="btn btn-success" onclick="confirmBatchAdd()">确认生成</button>
+          </div>
+        </div>
+
+        <div id="addForm" style="display: none; margin-bottom: 20px;" class="card">
+          <h4 style="margin-bottom: 16px; font-size: 14px; color: rgba(255,255,255,0.7);">添加单个登录ID</h4>
+          <div class="form-group">
+            <input type="text" class="form-control" id="newLoginId" placeholder="登录ID">
+            <input type="text" class="form-control" id="newSeqId" placeholder="序号ID（可选）">
+            <input type="text" class="form-control" id="newRemark" placeholder="备注（可选）">
+          </div>
+          <div class="form-group">
+            <select class="form-control" id="newScene">
+              <option value="PlanetCQ">PlanetCQ</option>
+              <option value="PlanetSH">PlanetSH</option>
+            </select>
+            <label style="display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.65);">
+              <div class="switch" id="newIsDemoSwitch" onclick="toggleSwitch(this)"></div>
+              <span style="font-size: 14px;">展示账号</span>
+            </label>
+          </div>
+          <div id="newDemoParams" style="display: none;" class="demo-params">
+            <div class="demo-param-row">
+              <span class="demo-param-label">体验天数</span>
+              <input type="number" class="form-control demo-param-input" id="newDemoExpireDays" value="3">
+            </div>
+            <div class="demo-param-row">
+              <span class="demo-param-label">冷却天数</span>
+              <input type="number" class="form-control demo-param-input" id="newDemoCooldownDays" value="30">
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="addLoginId()">添加</button>
+        </div>
+
+        <div id="loadingTip" class="loading" style="display: none; margin: 20px auto;"></div>
+        <div id="emptyTip" class="empty-tip" style="display: none;">暂无数据</div>
+
+        <table class="table" id="loginIdTable" style="display: none;">
+          <thead>
+            <tr>
+              <th>登录ID</th>
+              <th>序号</th>
+              <th>场景</th>
+              <th>备注</th>
+              <th>状态</th>
+              <th>绑定</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="loginIdTableBody"></tbody>
+        </table>
+
+        <div class="pagination" id="pagination" style="display: none;">
+          <button class="page-btn" id="prevPage" onclick="prevPage()">上一页</button>
+          <span class="page-info" id="pageInfo">1/1</span>
+          <button class="page-btn" id="nextPage" onclick="nextPage()">下一页</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-admins" class="tab-content" style="display: none;">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">管理员管理</div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 20px;">
+          <input type="text" class="form-control" id="newAdminOpenid" placeholder="输入openid">
+          <input type="text" class="form-control" id="newAdminRemark" placeholder="备注（可选）">
+          <button class="btn btn-success" onclick="addAdmin()">添加管理员</button>
+        </div>
+
+        <div id="adminList"></div>
+        <div id="emptyAdminTip" class="empty-tip" style="display: none;">暂无管理员</div>
+
+        <div class="card" style="margin-top: 30px;">
+          <div class="card-header">
+            <div class="card-title">最近活跃用户</div>
+            <button class="btn btn-sm btn-info" onclick="loadRecentUsers()">🔄 刷新</button>
+          </div>
+          <div id="recentUsersLoading" class="loading" style="display: none; margin: 20px auto;"></div>
+          <div id="recentUsersList" class="recent-users-list"></div>
+          <div id="emptyRecentTip" class="empty-tip" style="display: none;">暂无最近用户</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="editModal">
+    <div class="modal-content">
+      <div class="modal-title" id="editModalTitle">编辑</div>
+      <div class="modal-field">
+        <span class="field-label">备注</span>
+        <input type="text" class="form-control" id="editRemark" style="flex: 1;">
+      </div>
+      <div class="modal-field">
+        <span class="field-label">状态</span>
+        <div class="switch" id="editEnabledSwitch" onclick="toggleSwitch(this)"></div>
+      </div>
+      <div class="modal-field">
+        <span class="field-label">展示账号</span>
+        <div class="switch" id="editIsDemoSwitch" onclick="toggleSwitch(this)"></div>
+      </div>
+      <div id="editDemoParams" style="display: none;" class="demo-params">
+        <div class="demo-param-row">
+          <span class="demo-param-label">体验天数</span>
+          <input type="number" class="form-control demo-param-input" id="editDemoExpireDays" value="3">
+        </div>
+        <div class="demo-param-row">
+          <span class="demo-param-label">冷却天数</span>
+          <input type="number" class="form-control demo-param-input" id="editDemoCooldownDays" value="30">
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-warning" onclick="closeEditModal()">取消</button>
+        <button class="btn btn-primary" onclick="submitEdit()">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="qrModal">
+    <div class="modal-content">
+      <div class="modal-title">小程序码</div>
+      <div style="text-align: center; margin-bottom: 16px;">
+        <span style="font-family: monospace; color: #fff; font-size: 14px;" id="qrLoginId"></span>
+      </div>
+      <div class="qr-preview">
+        <img id="qrImage" class="qr-image" src="" alt="二维码" style="display: none;">
+        <div class="loading" id="qrLoading" style="display: none; margin: 20px auto;"></div>
+        <div class="empty-tip" id="qrEmpty" style="display: none;">加载中...</div>
+      </div>
+      <div style="text-align: center; margin-top: 16px;">
+        <span class="copy-btn" onclick="copyQrLink()">复制scene参数</span>
+      </div>
+      <button class="btn btn-primary" onclick="closeQrModal()" style="width: 100%; margin-top: 16px;">关闭</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <div class="login-modal" id="loginModal">
+    <div class="login-content">
+      <div class="login-logo">🌌</div>
+      <h2>墨矩XR 管理后台</h2>
+      <input type="password" id="passwordInput" placeholder="请输入管理员密码" />
+      <p id="loginError" class="error-text"></p>
+      <button class="btn btn-primary" onclick="login()">登录</button>
+    </div>
+  </div>
+
+  <script>
+    const CONFIG = {
+      envId: 'cloud1-9gvepoaz482e3f90'
+    };
+    
+    let currentPage = 1;
+    let totalPages = 1;
+    let currentSearch = '';
+    let editItem = null;
+    let qrLoginId = '';
+    let adminPassword = '';
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+
+    function toggleSwitch(el) {
+      el.classList.toggle('on');
+    }
+
+    function getSwitchValue(elId) {
+      return document.getElementById(elId).classList.contains('on');
+    }
+
+    function setSwitchValue(elId, value) {
+      const el = document.getElementById(elId);
+      if (value) el.classList.add('on');
+      else el.classList.remove('on');
+    }
+
+    function setTab(tabName) {
+      document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+      document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+      document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+      document.getElementById(`tab-${tabName}`).style.display = 'block';
+      if (tabName === 'loginIds' && document.getElementById('loginIdTableBody').children.length === 0) {
+        loadList();
+      }
+      if (tabName === 'admins') {
+        loadAdminList();
+        loadRecentUsers();
+      }
+    }
+
+    document.querySelectorAll('.nav-tab').forEach(tab => {
+      tab.addEventListener('click', () => setTab(tab.dataset.tab));
+    });
+
+    function toggleBatchForm() {
+      const form = document.getElementById('batchForm');
+      form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function toggleAddForm() {
+      const form = document.getElementById('addForm');
+      form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    }
+
+    document.getElementById('newIsDemoSwitch').addEventListener('click', () => {
+      const params = document.getElementById('newDemoParams');
+      params.style.display = getSwitchValue('newIsDemoSwitch') ? 'block' : 'none';
+    });
+
+    document.getElementById('editIsDemoSwitch').addEventListener('click', () => {
+      const params = document.getElementById('editDemoParams');
+      params.style.display = getSwitchValue('editIsDemoSwitch') ? 'block' : 'none';
+    });
+
+    async function loadList() {
+      showLoading(true);
+      try {
+        const data = await callAdminApi('loginIds', 'list', {
+          page: currentPage,
+          pageSize: 20,
+          keyword: currentSearch
+        });
+        if (data.success) {
+          renderList(data.data || [], data.total || 0);
+        } else {
+          showToast(data.message || '加载失败');
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('加载失败');
+      }
+      showLoading(false);
+    }
+
+    function showLoading(show) {
+      document.getElementById('loadingTip').style.display = show ? 'block' : 'none';
+      document.getElementById('loginIdTable').style.display = show ? 'none' : 'table';
+      document.getElementById('emptyTip').style.display = show ? 'none' : 'none';
+    }
+
+    function renderList(list, total) {
+      const tbody = document.getElementById('loginIdTableBody');
+      const emptyTip = document.getElementById('emptyTip');
+      const pagination = document.getElementById('pagination');
+
+      if (list.length === 0) {
+        tbody.innerHTML = '';
+        document.getElementById('loginIdTable').style.display = 'none';
+        emptyTip.style.display = 'block';
+        pagination.style.display = 'none';
+        return;
+      }
+
+      emptyTip.style.display = 'none';
+      document.getElementById('loginIdTable').style.display = 'table';
+
+      tbody.innerHTML = list.map(item => `
+        <tr>
+          <td>
+            <span style="font-family: monospace; font-weight: bold;">${item.loginId}</span>
+            ${item.isDemo ? '<span class="badge badge-warning" style="margin-left: 8px;">展示</span>' : ''}
+            ${item.enabled === false ? '<span class="badge badge-danger" style="margin-left: 8px;">已禁用</span>' : ''}
+            ${item.qrCodeUrl ? '<span class="badge badge-success" style="margin-left: 8px;">已生码</span>' : ''}
+          </td>
+          <td>${item._id}</td>
+          <td>${item.sceneId || '-'}</td>
+          <td>${item.remark || '-'}</td>
+          <td>${item.enabled === false ? '<span class="badge badge-danger">禁用</span>' : '<span class="badge badge-success">启用</span>'}</td>
+          <td>
+            ${item.isDemo ? `<span style="color: rgba(255,255,255,0.5); font-size: 12px;">展示账号</span>` : `
+              <span style="color: rgba(255,255,255,0.5); font-size: 12px; margin-right: 8px;">${(item.wxUsers || []).length}/5</span>
+              ${[1,2,3,4,5].map(i => `<span class="dot ${(item.wxUsers || []).length >= i ? 'filled' : ''}"></span>`).join('')}
+            `}
+          </td>
+          <td class="action-cell">
+            <button class="btn btn-sm btn-info" onclick="generateSingleQr('${item.loginId}')">生码</button>
+            ${item.qrCodeUrl ? `<button class="btn btn-sm btn-success" onclick="viewQrCode('${item.loginId}', '${item.qrCodeUrl}')">二维码</button>` : ''}
+            <button class="btn btn-sm btn-primary" onclick="copyQrLink('${item.loginId}')">复制</button>
+            <button class="btn btn-sm btn-warning" onclick="openEdit(${JSON.stringify(item).replace(/'/g, "\\'")})">编辑</button>
+            <button class="btn btn-sm btn-danger" onclick="removeLoginId('${item.loginId}')">删除</button>
+          </td>
+        </tr>
+      `).join('');
+
+      totalPages = Math.ceil(total / 20) || 1;
+      document.getElementById('pageInfo').textContent = `${currentPage}/${totalPages}`;
+      document.getElementById('prevPage').classList.toggle('disabled', currentPage <= 1);
+      document.getElementById('nextPage').classList.toggle('disabled', currentPage >= totalPages);
+      pagination.style.display = total > 20 ? 'flex' : 'none';
+    }
+
+    function handleSearchKeyup(e) {
+      if (e.key === 'Enter') {
+        doSearch();
+      }
+    }
+
+    function doSearch() {
+      currentSearch = document.getElementById('searchKeyword').value;
+      currentPage = 1;
+      loadList();
+    }
+
+    function prevPage() {
+      if (currentPage > 1) {
+        currentPage--;
+        loadList();
+      }
+    }
+
+    function nextPage() {
+      if (currentPage < totalPages) {
+        currentPage++;
+        loadList();
+      }
+    }
+
+    async function addLoginId() {
+      const loginId = document.getElementById('newLoginId').value.trim();
+      if (!loginId) {
+        showToast('请输入登录ID');
+        return;
+      }
+      try {
+        const data = await callAdminApi('loginIds', 'add', {
+          loginId,
+          sceneId: document.getElementById('newScene').value,
+          remark: document.getElementById('newRemark').value.trim(),
+          isDemo: getSwitchValue('newIsDemoSwitch'),
+          demoExpireDays: getSwitchValue('newIsDemoSwitch') ? Number(document.getElementById('newDemoExpireDays').value) || 3 : undefined,
+          demoCooldownDays: getSwitchValue('newIsDemoSwitch') ? Number(document.getElementById('newDemoCooldownDays').value) || 30 : undefined,
+          seqId: document.getElementById('newSeqId').value.trim() || undefined
+        });
+        if (data.success) {
+          showToast('添加成功');
+          document.getElementById('newLoginId').value = '';
+          document.getElementById('newSeqId').value = '';
+          document.getElementById('newRemark').value = '';
+          setSwitchValue('newIsDemoSwitch', false);
+          document.getElementById('newDemoParams').style.display = 'none';
+          toggleAddForm();
+          loadList();
+        } else {
+          showToast(data.message || '添加失败');
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('操作失败');
+      }
+    }
+
+    async function removeLoginId(loginId) {
+      if (!confirm(`确定要删除登录ID「${loginId}」吗？`)) return;
+      try {
+        const data = await callAdminApi('loginIds', 'remove', { loginId });
+        if (data.success) {
+          showToast('删除成功');
+          loadList();
+        } else {
+          showToast(data.message || '删除失败');
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('操作失败');
+      }
+    }
+
+    function openEdit(item) {
+      editItem = item;
+      document.getElementById('editModalTitle').textContent = `编辑 - ${item.loginId}`;
+      document.getElementById('editRemark').value = item.remark || '';
+      setSwitchValue('editEnabledSwitch', item.enabled !== false);
+      setSwitchValue('editIsDemoSwitch', !!item.isDemo);
+      document.getElementById('editDemoExpireDays').value = item.demoExpireDays || 3;
+      document.getElementById('editDemoCooldownDays').value = item.demoCooldownDays || 30;
+      document.getElementById('editDemoParams').style.display = !!item.isDemo ? 'block' : 'none';
+      document.getElementById('editModal').classList.add('show');
+    }
+
+    function closeEditModal() {
+      document.getElementById('editModal').classList.remove('show');
+      editItem = null;
+    }
+
+    async function submitEdit() {
+      if (!editItem) return;
+      try {
+        const data = await callAdminApi('loginIds', 'update', {
+          loginId: editItem.loginId,
+          remark: document.getElementById('editRemark').value,
+          enabled: getSwitchValue('editEnabledSwitch'),
+          isDemo: getSwitchValue('editIsDemoSwitch'),
+          demoExpireDays: getSwitchValue('editIsDemoSwitch') ? Number(document.getElementById('editDemoExpireDays').value) || 3 : undefined,
+          demoCooldownDays: getSwitchValue('editIsDemoSwitch') ? Number(document.getElementById('editDemoCooldownDays').value) || 30 : undefined
+        });
+        if (data.success) {
+          showToast('修改成功');
+          closeEditModal();
+          loadList();
+        } else {
+          showToast(data.message || '修改失败');
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('操作失败');
+      }
+    }
+
+    function copyQrLink(loginId = qrLoginId) {
+      const scene = `scene=loginId%3D${encodeURIComponent(loginId)}`;
+      navigator.clipboard.writeText(scene).then(() => {
+        showToast('已复制scene参数');
+      }).catch(() => {
+        showToast('复制失败');
+      });
+    }
+
+    async function confirmBatchAdd() {
+      const count = Math.min(Math.max(Number(document.getElementById('batchCount').value) || 10, 1), 500);
+      const scene = document.getElementById('batchScene').value;
+      if (!confirm(`将生成${count}个安全随机登录ID（场景: ${scene}），确定吗？`)) return;
+      try {
+        const data = await callAdminApi('loginIds', 'batchAdd', { count, sceneId: scene });
+        if (data.success) {
+          showToast(`成功生成${data.count}个ID`);
+          toggleBatchForm();
+          loadList();
+        } else {
+          showToast(data.message || '生成失败');
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('操作失败');
+      }
+    }
+
+    async function generateSingleQr(loginId) {
+      try {
+        const data = await callAdminApi('qrCodes', 'regenerate', { loginIds: [loginId] });
+        if (data.success && data.count > 0) {
+          showToast('生成成功');
+          loadList();
+          const item = document.querySelector(`tr:contains('${loginId}')`);
+          if (item) {
+            viewQrCode(loginId, data.qrCodeUrl || '');
+          }
+        } else {
+          const errMsg = data.errors && data.errors.length > 0
+            ? data.errors[0].error || data.errors[0].errMsg || '生成失败'
+            : data.message || '生成失败';
+          showToast(errMsg);
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('操作失败');
+      }
+    }
+
+    function viewQrCode(loginId, qrCodeUrl) {
+      qrLoginId = loginId;
+      document.getElementById('qrLoginId').textContent = loginId;
+      document.getElementById('qrImage').style.display = 'none';
+      document.getElementById('qrLoading').style.display = 'block';
+      document.getElementById('qrEmpty').style.display = 'none';
+      document.getElementById('qrModal').classList.add('show');
+      if (qrCodeUrl) {
+        fetchQrImage(qrCodeUrl);
+      }
+    }
+
+    async function fetchQrImage(qrCodeUrl) {
+      try {
+        const res = await fetch('/api/getTempFileURL', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ fileList: [qrCodeUrl] })
+        });
+        const data = await res.json();
+        if (data.fileList && data.fileList[0]) {
+          document.getElementById('qrImage').src = data.fileList[0].tempFileURL;
+          document.getElementById('qrImage').style.display = 'block';
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        document.getElementById('qrLoading').style.display = 'none';
+      }
+    }
+
+    function closeQrModal() {
+      document.getElementById('qrModal').classList.remove('show');
+      document.getElementById('qrImage').src = '';
+    }
+
+    async function cleanExpiredDemoBindings() {
+      if (!confirm('将清理所有展示账号中已过冷却期的绑定记录，确定吗？')) return;
+      try {
+        const data = await callAdminApi('loginIds', 'cleanExpiredDemoBindings');
+        if (data.success) {
+          showToast(`已清理${data.cleaned}条记录`);
+        } else {
+          showToast(data.message || '清理失败');
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('操作失败');
+      }
+    }
+
+    async function loadAdminList() {
+      try {
+        const data = await callAdminApi('admins', 'list');
+        if (data.success) {
+          renderAdminList(data.data || []);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function renderAdminList(list) {
+      const container = document.getElementById('adminList');
+      const emptyTip = document.getElementById('emptyAdminTip');
+
+      if (list.length === 0) {
+        container.innerHTML = '';
+        emptyTip.style.display = 'block';
+        return;
+      }
+
+      emptyTip.style.display = 'none';
+      container.innerHTML = list.map(item => `
+        <div class="admin-item">
+          <div style="display: flex; align-items: center;">
+            <span class="admin-id">${item.openid}</span>
+            ${item.remark ? `<span class="admin-remark">${item.remark}</span>` : ''}
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-sm btn-primary" onclick="copyOpenid('${item.openid}')">复制</button>
+            <button class="btn btn-sm btn-danger" onclick="removeAdmin('${item.openid}')">移除</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function addAdmin() {
+      const openid = document.getElementById('newAdminOpenid').value.trim();
+      if (!openid) {
+        showToast('请输入openid');
+        return;
+      }
+      try {
+        const data = await callAdminApi('admins', 'add', {
+          targetOpenid: openid,
+          adminRemark: document.getElementById('newAdminRemark').value.trim()
+        });
+        if (data.success) {
+          showToast('添加成功');
+          document.getElementById('newAdminOpenid').value = '';
+          document.getElementById('newAdminRemark').value = '';
+          loadAdminList();
+          loadRecentUsers();
+        } else {
+          showToast(data.message || '添加失败');
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('操作失败');
+      }
+    }
+
+    async function removeAdmin(openid) {
+      if (!confirm('确定要移除该管理员吗？')) return;
+      try {
+        const data = await callAdminApi('admins', 'remove', { targetOpenid: openid });
+        if (data.success) {
+          showToast('已移除');
+          loadAdminList();
+        } else {
+          showToast(data.message || '移除失败');
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('操作失败');
+      }
+    }
+
+    function copyOpenid(openid) {
+      navigator.clipboard.writeText(openid).then(() => {
+        showToast('已复制openid');
+      }).catch(() => {
+        showToast('复制失败');
+      });
+    }
+
+    async function loadRecentUsers() {
+      document.getElementById('recentUsersLoading').style.display = 'block';
+      document.getElementById('recentUsersList').innerHTML = '';
+      document.getElementById('emptyRecentTip').style.display = 'none';
+      try {
+        const data = await callAdminApi('admins', 'listRecentUsers');
+        if (data.success) {
+          renderRecentUsers(data.data || []);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        document.getElementById('recentUsersLoading').style.display = 'none';
+      }
+    }
+
+    function renderRecentUsers(list) {
+      const container = document.getElementById('recentUsersList');
+      const emptyTip = document.getElementById('emptyRecentTip');
+
+      if (list.length === 0) {
+        container.innerHTML = '';
+        emptyTip.style.display = 'block';
+        return;
+      }
+
+      emptyTip.style.display = 'none';
+      container.innerHTML = list.map(item => `
+        <div class="recent-user-item">
+          <span class="recent-user-id">${item.openid}</span>
+          <button class="btn btn-sm btn-success" onclick="addAdminFromRecent('${item.openid}')">设为管理员</button>
+        </div>
+      `).join('');
+    }
+
+    async function addAdminFromRecent(openid) {
+      const remark = prompt('输入备注（可选）：');
+      if (remark === null) return;
+      try {
+        const data = await callAdminApi('admins', 'add', {
+          targetOpenid: openid,
+          adminRemark: remark.trim()
+        });
+        if (data.success) {
+          showToast('添加成功');
+          loadAdminList();
+          loadRecentUsers();
+        } else {
+          showToast(data.message || '添加失败');
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('操作失败');
+      }
+    }
+
+    function login() {
+      const password = document.getElementById('passwordInput').value;
+      if (!password) {
+        document.getElementById('loginError').textContent = '请输入密码';
+        return;
+      }
+      
+      adminPassword = password;
+      localStorage.setItem('adminPassword', password);
+      document.getElementById('loginModal').style.display = 'none';
+      loadList();
+    }
+
+    function checkLogin() {
+      const saved = localStorage.getItem('adminPassword');
+      if (saved) {
+        adminPassword = saved;
+        document.getElementById('loginModal').style.display = 'none';
+      } else {
+        document.getElementById('loginModal').style.display = 'flex';
+      }
+    }
+
+    async function callAdminApi(module, action, data = {}) {
+      if (!adminPassword) {
+        checkLogin();
+        return { success: false, message: '请先登录' };
+      }
+      
+      const url = `https://${CONFIG.envId}.api.tcloudbasegateway.com/v1/functions/adminApi`;
+      try {
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Password': adminPassword
+          },
+          body: JSON.stringify({ module, action, ...data })
+        });
+        const result = await res.json();
+        
+        if (result.success === false && result.message === '未授权访问') {
+          adminPassword = '';
+          localStorage.removeItem('adminPassword');
+          document.getElementById('loginError').textContent = '密码错误';
+          document.getElementById('loginModal').style.display = 'flex';
+        }
+        
+        return result;
+      } catch (error) {
+        console.error('调用失败:', error);
+        return { success: false, message: error.message };
+      }
+    }
+
+    checkLogin();
+  </script>
+</body>
+</html>
